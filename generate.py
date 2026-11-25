@@ -10,6 +10,7 @@ import html
 import json
 import os
 import sys
+import time
 import urllib.request
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -237,8 +238,14 @@ def render_a3(d, mode, embed_font=True):
 
 # ---------------------------------------------------------------- 실행
 def fetch(handle):
-    url = f"https://solved.ac/api/v3/user/show?handle={handle}"
-    req = urllib.request.Request(url, headers={"User-Agent": "boj-badge", "Accept": "application/json"})
+    # 캐시된 예전 값을 받지 않도록 매번 다른 주소로 요청하고, 캐시 금지 헤더를 붙인다
+    url = f"https://solved.ac/api/v3/user/show?handle={handle}&_={int(time.time())}"
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "boj-badge",
+        "Accept": "application/json",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+    })
     with urllib.request.urlopen(req, timeout=15) as r:
         u = json.load(r)
     return dict(handle=u["handle"], tier=u["tier"], rating=u["rating"], solved=u["solvedCount"])
