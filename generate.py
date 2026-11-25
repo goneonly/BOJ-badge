@@ -238,17 +238,30 @@ def render_a3(d, mode, embed_font=True):
 
 # ---------------------------------------------------------------- 실행
 def fetch(handle):
-    # 캐시된 예전 값을 받지 않도록 매번 다른 주소로 요청하고, 캐시 금지 헤더를 붙인다
-    url = f"https://solved.ac/api/v3/user/show?handle={handle}&_={int(time.time())}"
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "boj-badge",
+    """solved.ac에서 티어 정보를 가져온다.
+    웹사이트가 쓰는 v4 API를 먼저 쓰고, 실패하면 예전 v3 API로 다시 시도한다.
+    (v3는 갱신이 늦어서 예전 값이 나올 수 있다)"""
+    headers = {
+        "User-Agent": "Mozilla/5.0 (boj-badge; +https://github.com/goneonly/boj-badge)",
         "Accept": "application/json",
         "Cache-Control": "no-cache",
-        "Pragma": "no-cache",
-    })
-    with urllib.request.urlopen(req, timeout=15) as r:
-        u = json.load(r)
-    return dict(handle=u["handle"], tier=u["tier"], rating=u["rating"], solved=u["solvedCount"])
+    }
+    urls = [
+        f"https://solved.ac/api/v4/users/{handle}",
+        f"https://solved.ac/api/v3/user/show?handle={handle}&_={int(time.time())}",
+    ]
+    last_error = None
+    for url in urls:
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as r:
+                u = json.load(r)
+            print(f"source: {url.split('?')[0]}")
+            return dict(handle=u["handle"], tier=u["tier"], rating=u["rating"], solved=u["solvedCount"])
+        except Exception as e:
+            print(f"실패: {url.split('?')[0]} ({e})", file=sys.stderr)
+            last_error = e
+    raise last_error
 
 
 def build(data):
