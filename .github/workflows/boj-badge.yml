@@ -22,6 +22,9 @@ jobs:
           python-version: "3.12"
 
       - name: Generate badges
+        env:
+          SOLVED_AC_CLIENT_ID: ${{ secrets.SOLVED_AC_CLIENT_ID }}
+          SOLVED_AC_CLIENT_SECRET: ${{ secrets.SOLVED_AC_CLIENT_SECRET }}
         run: python generate.py --handle "$BOJ_HANDLE"
 
       - name: Commit if changed
