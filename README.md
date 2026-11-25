@@ -19,14 +19,26 @@ Fork 하거나, 파일을 받아서 새 레포에 올리면 돼요.
 BOJ_HANDLE: onlygone
 ```
 
-### 3. 한 번 직접 돌려보기
+### 3. solved.ac 앱 등록하기
+
+solved.ac 최신 점수는 인증이 있어야 받을 수 있어요.
+
+1. [solved.ac Backstage](https://backstage.solved.ac/developer/apps)에서 앱을 하나 만들어요.
+2. 나온 **Client ID**와 **Client Secret**을 복사해요.
+3. 이 레포의 **Settings → Secrets and variables → Actions → New repository secret**에서 두 개를 추가해요.
+   - `SOLVED_AC_CLIENT_ID`
+   - `SOLVED_AC_CLIENT_SECRET`
+
+> 등록 안 해도 돌아가긴 하지만, 예전 API를 써서 점수가 늦게 반영될 수 있어요.
+
+### 4. 한 번 직접 돌려보기
 
 레포의 **Actions** 탭 → **BOJ badge** → **Run workflow** 를 눌러요.
 1분쯤 지나서 `badges/` 폴더에 SVG 4개가 생기면 성공이에요.
 
 > Fork 한 레포는 Actions가 꺼져 있을 수 있어요. Actions 탭에서 켜 주세요.
 
-### 4. 프로필 README에 붙이기
+### 5. 프로필 README에 붙이기
 
 프로필 레포(`내아이디/내아이디`)의 README.md에 아래를 붙여요.
 `내아이디` 두 군데랑 `백준아이디`만 바꾸면 돼요.
@@ -64,6 +76,8 @@ GitHub를 다크 모드로 보는 사람한테는 어두운 배지가 보여요.
 ## 직접 돌려보기
 
 ```bash
+export SOLVED_AC_CLIENT_ID=...         # 앱 Client ID
+export SOLVED_AC_CLIENT_SECRET=...     # 앱 Client Secret
 python generate.py --handle 백준아이디    # badges/ 에 배지 생성
 python generate.py --gallery             # 모든 티어 미리보기 (gallery.html)
 ```
